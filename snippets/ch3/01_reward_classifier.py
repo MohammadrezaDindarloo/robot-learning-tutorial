@@ -26,12 +26,21 @@ policy = make_policy(config, ds_meta=dataset.meta)
 optimizer = config.get_optimizer_preset().build(policy.parameters())
 preprocessor, _ = make_pre_post_processors(policy_cfg=config, dataset_stats=dataset.meta.stats)
 
-
 # your HF username and model repo id for the reward classifier
-classifier_id = "lerobot/reward_classifier_hil_serl_example"
+classifier_id = "MohammadrezaD/reward_classifier"
 
 # Instantiate a dataloader
 dataloader = torch.utils.data.DataLoader(dataset, batch_size=16, shuffle=True)
+
+# batch = next(iter(dataloader))
+# print(batch.keys())
+
+# for k, v in batch.items():
+#     if isinstance(v, torch.Tensor):
+#         print(k, v.shape, v.dtype)
+#     else:
+#         # sometimes strings / lists exist (e.g., 'task')
+#         print(k, type(v))
 
 # Training loop
 num_epochs = 5
