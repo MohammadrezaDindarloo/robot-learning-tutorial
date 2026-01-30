@@ -36,6 +36,8 @@ def run_actor(
     """The actor process - interacts with environment and collects data.
     The policy is frozen and only the parameters are updated, popping the most recent ones 
     from a queue."""
+    # In actor–learner setups, the learner uses train() mode for updates.
+    # The actor uses eval() mode because it’s only sampling actions (inference), not updating weights.
     policy_actor.eval()
     policy_actor.to(device)
 
@@ -67,7 +69,8 @@ def run_actor(
 
                 # Get action from policy
                 policy_obs = make_policy_obs(obs, device=device)
-                # predicts a single action, not a chunk of actions!
+                # predicts a single action, not a chunk of actions! 
+                # (So for your rollout case, you build policy_obs with unsqueeze(0), so B = 1. That means: actions shape=(1,A))
                 action_tensor = policy_actor.select_action(policy_obs)
                 action = action_tensor.squeeze(0).cpu().numpy()
 

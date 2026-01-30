@@ -23,6 +23,8 @@ def run_learner(
 ):
     """The learner process - trains SAC policy on transitions streamed from the actor, 
     updating parameters for the actor to adopt."""
+    # In actor–learner setups, the learner uses train() mode for updates.
+    # The actor uses eval() mode because it’s only sampling actions (inference), not updating weights.
     policy_learner.train()
     policy_learner.to(device)
 
@@ -43,6 +45,8 @@ def run_learner(
                 online_buffer.add(**transition)
 
                 # HIL-SERL: Add ONLY human intervention transitions to offline buffer
+                # 1) Online buffer : all new transitions from the actor (autonomous + interventions)
+		        # 2) Offline buffer : demonstrations + _only_ intervention transitions (human corrections)
                 is_intervention = \
                     transition.get("complementary_info", {}).get("is_intervention", False)
                 if is_intervention:
